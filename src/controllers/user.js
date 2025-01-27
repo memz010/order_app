@@ -1,3 +1,4 @@
+import { createSessionModel } from '../models/session.js';
 import { createUserModel } from '../models/index.js'; 
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -47,6 +48,29 @@ export const login = async (req, res) => {
   }
 };
 
-export const logout = (req, res) => {
+/*export const logout = (req, res) => {
   res.status(200).json({ message: "Logout successful" });
 };
+*/
+
+export const logout = async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ message: "Invalid authorization header" });
+    }
+    
+    const token = authHeader.split(' ')[1];
+    const Session = createSessionModel();
+    
+    await Session.create({ 
+      token, 
+      expiresAt: new Date(Date.now() + 3600000) // 1 ساعة
+    });
+
+    res.status(200).json({ message: "Logout successful" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
