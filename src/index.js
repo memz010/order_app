@@ -3,7 +3,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import { createUsersTable } from './models/index.js'; 
 import { authRouter } from "./routes/index.js"; 
-import { ormDriver } from './models/ORM.js'; //
+import { ormDriver } from './models/ORM.js';
 dotenv.config();
 
 
@@ -20,7 +20,7 @@ sequelize.authenticate()
   .then(() => {
     console.log('Connection has been established successfully.');
 
-    return createUsersTable(); // إنشاء الجداول
+    return createUsersTable(); 
   })
   .then(() => {
     app.listen(PORT, () => {

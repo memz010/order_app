@@ -1,17 +1,25 @@
-import User from "../models/user.js";
+import { createUserModel } from '../models/index.js'; 
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
+const User = createUserModel(); 
 
 export const register = async (req, res) => {
-  const { firstName, lastName, phone, password } = req.body;
+  const { firstName, lastName, phone, password, profileImage, location } = req.body;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ firstName, lastName, phone, password: hashedPassword });
+    const user = await User.create({ 
+      firstName, 
+      lastName, 
+      phone, 
+      password: hashedPassword,
+      profileImage, 
+      location 
+    });
     res.status(201).json({ message: "User registered successfully", user });
   } catch (error) {
     res.status(400).json({ error: error.message });
