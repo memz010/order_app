@@ -62,11 +62,7 @@ export const logout = async (req, res) => {
     
     const token = authHeader.split(' ')[1];
     const Session = createSessionModel();
-    
-    await Session.create({ 
-      token, 
-      expiresAt: new Date(Date.now() + 3600000) // 1 ساعة
-    });
+    await Session.destroy({ where: { token } });
 
     res.status(200).json({ message: "Logout successful" });
   } catch (error) {
