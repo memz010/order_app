@@ -7,6 +7,8 @@ import { userRouter } from "./routes/index.js";
 import { ormDriver } from './models/ORM.js';
 import { authenticate } from './Middleware/auth.js';
 
+
+
 dotenv.config();
 
 const app = express();
@@ -14,7 +16,6 @@ const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 app.use('/api/user', userRouter); 
-
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Something went wrong!' });

@@ -45,6 +45,11 @@ export const createUserModel = () => {
           len: [6, 100],
         },
       },
+      role: { 
+        type: DataTypes.ENUM('user', 'admin'), 
+        allowNull: false,
+        defaultValue: 'user' 
+      },
       profileImage: { 
         type: DataTypes.STRING, 
         allowNull: true,
@@ -59,11 +64,6 @@ export const createUserModel = () => {
           notEmpty: false,
         },
       },
-      //role: { 
-      //  type: DataTypes.ENUM('user', 'admin'), 
-       // allowNull: false,
-       // defaultValue: 'user' 
-     // },
     });
   }
   return User;

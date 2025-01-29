@@ -9,7 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const User = createUserModel(); 
 
 export const register = async (req, res) => {
-  const { firstName, lastName, phone, password, profileImage, location } = req.body;
+  const { firstName, lastName, phone, password, profileImage, location, role } = req.body;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -19,7 +19,8 @@ export const register = async (req, res) => {
       phone, 
       password: hashedPassword,
       profileImage, 
-      location 
+      location,
+      role: role || 'user' 
     });
     res.status(201).json({ message: "User registered successfully", user });
   } catch (error) {
@@ -41,17 +42,19 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid password" });
     }
 
-    const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: "1h" });
+ 
+    const Session = createSessionModel();
+    await Session.create({
+      token,
+      expiresAt: new Date(Date.now() + 3600000) 
+    });
+
     res.json({ message: "Login successful", token });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
-
-/*export const logout = (req, res) => {
-  res.status(200).json({ message: "Logout successful" });
-};
-*/
 
 export const logout = async (req, res) => {
   try {
@@ -59,14 +62,16 @@ export const logout = async (req, res) => {
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ message: "Invalid authorization header" });
     }
-    
     const token = authHeader.split(' ')[1];
     const Session = createSessionModel();
-    await Session.destroy({ where: { token } });
 
+    const existingSession = await Session.findOne({ where: { token } });
+    if (!existingSession) {
+      return res.status(404).json({ message: "Token not found in sessions" });
+    }
+    await Session.destroy({ where: { token } });
     res.status(200).json({ message: "Logout successful" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
-
