@@ -1,4 +1,4 @@
-import { Sequelize } from "sequelize";
+import { Sequelize , Op} from "sequelize";
 import { createUserModel } from './user.js';
 import { createStoreModel } from './store.js';
 import { createProductModel } from './Product.js';
@@ -17,20 +17,17 @@ export const ormDriver = () => {
       dialect: "mysql",
     });
 
-    // تعريف النماذج
     const User = createUserModel();
     const Store = createStoreModel();
     const Product = createProductModel();
     const Session = createSessionModel();
 
-    // تعريف العلاقات
     if (Store.associate) {
       Store.associate({ Product });
     }
     if (Product.associate) {
       Product.associate({ Store });
     }
-    // يمكنك إضافة علاقات أخرى هنا
   }
   return sequelize;
 };
@@ -38,3 +35,4 @@ export const ormDriver = () => {
 export const removeOrmDriver = () => {
   sequelize = null;
 };
+export { Op };

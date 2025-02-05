@@ -1,4 +1,5 @@
 import { createProductModel } from '../models/Product.js'; 
+import { Op } from '../models/ORM.js';
 
 export const getProducts = async (req, res) => {
   try {
@@ -70,6 +71,29 @@ export const deleteProduct = async (req, res) => {
       res.status(204).send();
     } else {
       res.status(404).json({ message: "Product not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const searchProductsByName = async (req, res) => {
+  const { name } = req.query;
+
+  try {
+    const Product = createProductModel();
+    const products = await Product.findAll({
+      where: {
+        name: {
+          [Op.like]: `%${name}%` 
+        }
+      }
+    });
+
+    if (products.length > 0) {
+      res.status(200).json(products);
+    } else {
+      res.status(404).json({ message: "No products found with the given name" });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });

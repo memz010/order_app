@@ -1,4 +1,5 @@
 import { createStoreModel } from '../models/store.js';
+import { Op } from '../models/ORM.js'; 
 
 export const getStores = async (req, res) => {
   try {
@@ -54,6 +55,29 @@ export const deleteStore = async (req, res) => {
       res.status(204).send();
     } else {
       res.status(404).json({ message: "Store not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const searchStoresByName = async (req, res) => {
+  const { name } = req.query; 
+
+  try {
+    const Store = createStoreModel();
+    const stores = await Store.findAll({
+      where: {
+        name: {
+          [Op.like]: `%${name}%`
+        }
+      }
+    });
+
+    if (stores.length > 0) {
+      res.status(200).json(stores);
+    } else {
+      res.status(404).json({ message: "No stores found with the given name" });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
