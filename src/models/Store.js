@@ -27,6 +27,13 @@ export const createStoreModel = () => {
         },
       },
     });
+
+    Store.associate = (models) => {
+      Store.hasMany(models.Product, { 
+        foreignKey: 'storeId',
+        as: 'products'
+      });
+    };
   }
   return Store;
 };

@@ -1,4 +1,8 @@
 import { Sequelize } from "sequelize";
+import { createUserModel } from './user.js';
+import { createStoreModel } from './store.js';
+import { createProductModel } from './Product.js';
+import { createSessionModel } from './session.js';
 
 /**
  * @type {Sequelize}
@@ -12,6 +16,21 @@ export const ormDriver = () => {
       host: DB_HOST,
       dialect: "mysql",
     });
+
+    // تعريف النماذج
+    const User = createUserModel();
+    const Store = createStoreModel();
+    const Product = createProductModel();
+    const Session = createSessionModel();
+
+    // تعريف العلاقات
+    if (Store.associate) {
+      Store.associate({ Product });
+    }
+    if (Product.associate) {
+      Product.associate({ Store });
+    }
+    // يمكنك إضافة علاقات أخرى هنا
   }
   return sequelize;
 };

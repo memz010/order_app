@@ -1,4 +1,4 @@
-import { createStoreModel } from '../models/Store.js';
+import { createStoreModel } from '../models/store.js';
 
 export const getStores = async (req, res) => {
   try {
